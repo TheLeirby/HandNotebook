@@ -151,6 +151,43 @@ $licensignInfo | Export-CliXml -Path c:\1\RDSLicenseInfo.xml
 ######### импорт настроек RDS на новом сервере
 
 
+# импорт коллекции сессий
+
+$collections = Import-Clixml -Path c:\1\RDSCollections.xml
+
+foreach ($collection in $collections) {
+          New-RDSessionCollection 
+            -CollectionName $collection.CollectionName  
+            -SessionHost $collection.SessionHost 
+            -DefaultUserGroup $collection.DefaultUserGroup 
+            -ConnectionBroker $collection.ConnectionBroker 
+}
 
 
 
+# импорт хостов сеансов
+
+$sessionHosts = Import-Clixml -Path c:\1\RDSessionHost.xml
+foreach ($hosts in $sessionHosts) {
+          Add-RDSessionHosts
+            -CollectionName $collection.CollectionName  
+            -SessionHost $collection.SessionHost 
+}
+
+
+# импорт лицензий
+
+$licensignInfo = Import-Clixml -Path c:\1\RDSLicenseInfo.xml
+Set-RDSLicensignInfo -Mode $licensignInfo.Mode -LicenseServer $licensignInfo.LicenseServer -CAL $licensignInfo.CAL
+
+
+
+
+
+
+
+
+
+
+
+       
