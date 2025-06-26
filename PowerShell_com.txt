@@ -1,4 +1,27 @@
+Для работы Powershell  версии 5 и выше, без установки:
+
+1. скачать zip файл PowerShell-7.5.1-win-x64 с сайта microsoft
+
+2. установить  WindowsFeature Migration
 Install-WindowsFeature Migration
+Install-WindowsFeature -Name PowerShell
+
+
+3. подружить  с PowerShell командой 
+Get-WindowsOptionalFeature -Online -FeatureName PowerShell
+
+
+============================= сбор информации о системе! ====
+
+
+
+#проверить версию PowerShell
+$PSVersionTable
+
+Install-WindowsFeature Migration
+
+
+
 
 
 Export-WindowsFeature
@@ -26,4 +49,12 @@ Get-WmiObject -Class Win32_Processor
 # инфо о RAM    07
 Get-WmiObject -Class Win32_PhysicalMemory
 
-# 
+# Тоже самое что и с Ram только кратко! 08
+
+Get-WmiObject -Class Win32_ComputerSystem | Select-Object TotalPhysicalMemory
+
+# инфо о загрузке диска 09
+Get-WmiObject -Class Win32_LogicalDisk
+
+# инфо о сети           10
+Get-WmiObject -Class Win32_NetworkAdapterConfiguration | Where-Object {$_.IPEnabled -eq $true}
