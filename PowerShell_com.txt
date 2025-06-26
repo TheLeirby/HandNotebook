@@ -58,3 +58,99 @@ Get-WmiObject -Class Win32_LogicalDisk
 
 # инфо о сети           10
 Get-WmiObject -Class Win32_NetworkAdapterConfiguration | Where-Object {$_.IPEnabled -eq $true}
+
+
+
+========= экспорт настроек системы ====
+
+# Экспорт установленных компонентов (ролей и функций) PowerShell      10001   
+Get-WindowsFeature | Where-Object {$_.Installed -eq $true }  | Export-CliXml -Path c:\1\InstalledFeatures.xml
+
+#------- экспортируем сис настроек              10002
+netsh advfirewall export "c:\1\firewall_config.wfw"
+
+
+# создаем копию реестра....     10003
+reg export HKLM\SYSTEM\CurrentControlSet\Services c:\1\ServicesSettings.reg
+
+# экспорт  всех настроек системы и конфигураций    10004
+Get-ComputerInfo | Out-File "c:\1\10004  SysInf.txt"
+
+
+
+
+# экспорт настроек брэдмаузер  10005
+
+Get-NetFirewallRule | Export-Clixml -Path "c:\1\firewall_config.xml"
+
+=============
+
+# экспорт на новый сервер роли и функции и устанавливает их на новом сервере
+
+
+$features = Import_Clixml -Path "c:\1\xxx.txt"
+foreach ($feature in $features) {
+    if ($feature.Installed) {
+          Install-WindowsFeature -Name $feature.Name -IncludeManagementTools
+    }
+}
+
+
+
+# импорт настроек брэдмаузера
+
+$firewallRules = Import-Clixml -Path "c:\1\xxx.txt"
+foreach ($rule in $firmeallRules) {
+   New-NetFirewallRule -DisplayName $rule.DisplayName -Director $rule Direction -Action 
+$rule.Action -Protocol $rule.Protocol -localPort $rule.LocalPort
+}
+
+# # # # # копируем службы
+
+# работа с IIS
+
+############## экспорт 
+
+%windir%\system32\inetsrv\appcmd add backup "Backup1"
+
+############  иморт на новый 
+
+%windir%\system32\inetsrv\appcmd restore backup "Backup1"
+
+
+
+==========================
+
+# работа со службой  удалённые раб столы
+
+1. проверка на новом серваке установлена ли данная роль:
+
+install-WindowsFeature -Name Remote-Desktop-Services
+
+
+
+2. экспорт настроек RDS 
+
+##### экспорт
+
+#получаем коллекции сессий
+$collections = Get-RDSessionCollection
+$collections | Export-CliXml -Path c:\1\RDSCollections.xml
+
+#получаем хосты сеансов
+$sessionHosts = Get-RDSessionHost
+$sessionHosts | Export-CliXml -Path c:\1\RDSessionHost.xml
+
+
+# получаем лицензии
+$licensignInfo = Get-RDLicenseConfiguration
+$licensignInfo | Export-CliXml -Path c:\1\RDSLicenseInfo.xml
+
+
+
+######### импорт настроек RDS на новом сервере
+
+
+
+
+
