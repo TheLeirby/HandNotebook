@@ -1,0 +1,29 @@
+Install-WindowsFeature Migration
+
+
+Export-WindowsFeature
+
+# просмотр установленных обновлений.  01
+Get-WmiObject -Class Win32_QuickFixEngineering
+
+
+# посмотреть стасус всех системных служб  02
+Get-Service
+
+# информация о программном обеспечении   03
+Get-WmiObject -Class Win32_Product
+
+# информация о системе с помощью системного адреса  04
+systeminfo
+
+# общая информация о системе  05
+Get-ComputerInfo
+
+
+#информация о процессоре   06
+Get-WmiObject -Class Win32_Processor
+
+# инфо о RAM    07
+Get-WmiObject -Class Win32_PhysicalMemory
+
+# 
